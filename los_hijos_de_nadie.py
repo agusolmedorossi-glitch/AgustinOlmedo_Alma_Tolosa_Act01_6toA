@@ -144,7 +144,6 @@ RUTA_MUSICA_COMBATE= r"C:\Users\almat\OneDrive\Documentos\LosHijosDeNadie\Media\
 #Cinemática
 RUTA_CINE_PAMPA= r"C:\Users\almat\OneDrive\Documentos\LosHijosDeNadie\Media\Paisajes\final_cine.png"
 
-from los_hijos_de_nadieCap2 import *
 
 #Seccion 3 paleta de colores
 
@@ -2710,21 +2709,26 @@ class CapituloPampa(EscenaBase):
         self._cooldown_lanzamiento = COOLDOWN_LANZAMIENTO
         self._jugador.iniciar_animacion_ataque()
 
-    #Guardado
-
     def _sincronizar_partida(self) -> None:
         self.gestor.partida["salud"]      = self._jugador.salud
         self.gestor.partida["honor"]      = self._jugador.honor
         self.gestor.partida["inventario"] = self._inventario.a_lista()
 
-    def _guardar_y_avanzar(self) -> None:
-        self._sincronizar_partida()
-        self.gestor.cambiar("fin_demo")
+    def _guardar_y_avanzar(self):
 
-    def _guardar_rapido(self) -> None:
         self._sincronizar_partida()
-        guardar_partida(self.gestor.partida, self.NOMBRE, self._jugador.x)
-        self._hud.mostrar_mensaje("Partida guardada  [F5]")
+
+        self.gestor.partida["capitulo_1_completado"] = True
+        guardar_partida(
+            self.gestor.partida,
+            "capitulo_2",
+            self._jugador.x
+        )
+        self.gestor.cambiar("capitulo_2")
+        def _guardar_rapido(self) -> None:
+            self._sincronizar_partida()
+            guardar_partida(self.gestor.partida, self.NOMBRE, self._jugador.x)
+            self._hud.mostrar_mensaje("Partida guardada  [F5]")
 
 
 # Sección 23 fin demo
