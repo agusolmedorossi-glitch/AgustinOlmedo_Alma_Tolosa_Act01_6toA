@@ -158,22 +158,7 @@ COLOR_OVERLAY_INTRO = (  0,   0,   0, 190)
 # ============================================================================
 
 def _quitar_fondo_solido(superficie: pygame.Surface) -> pygame.Surface:
-    """Prepara una imagen para dibujarse con fondo transparente.
-
-    Si el archivo ya tiene canal alfa real (un PNG exportado con
-    transparencia, lo más común), se conserva esa transparencia tal
-    cual con convert_alpha(). Si NO tiene canal alfa (por ejemplo, la
-    imagen viene "aplastada" sobre un fondo negro sólido), se usa la
-    técnica de "color llave": el negro se marca como transparente con
-    set_colorkey().
-
-    Mezclar ambas técnicas en la misma superficie y después escalarla
-    con pygame.transform.scale() puede hacer que Pygame pierda el
-    colorkey en el resultado escalado (el fondo "transparente" vuelve
-    a verse como un rectángulo negro sólido). Por eso acá se elige un
-    solo método según el archivo, y en HojaSprites/cargar_imagen se
-    vuelve a aplicar el colorkey después de escalar.
-    """
+    
     mascaras = superficie.get_masks()
     tiene_alfa_real = mascaras[3] != 0
 
@@ -275,37 +260,7 @@ class HojaSprites:
     def __init__(self, ruta: str, ancho_cuadro: int = None, alto_cuadro: int = None,
                  escala: float = ESCALA_GAMEPLAY, alto_destino: int = None,
                  fotogramas: int = 4):
-        """Carga y trocea una hoja de sprites de 4 fotogramas.
-
-        ancho_cuadro / alto_cuadro: tamaño de UN cuadro en el archivo
-        original. Varía de un personaje a otro (Cruz, por ejemplo,
-        viene en una hoja de 516x512, mientras que Benjamín, el
-        caballo, los soldados, Arapoty y el Coronel vienen en hojas de
-        400x396) — por eso NO alcanza con aplicar siempre la misma
-        escala fija: hojas de tamaño distinto terminarían viéndose en
-        tamaños distintos en pantalla.
-
-        Si NO se indican ancho_cuadro/alto_cuadro (quedan en None), se
-        calculan automáticamente a partir del tamaño real del archivo
-        cargado, asumiendo "fotogramas" cuadros en una sola fila
-        horizontal (la convención del proyecto: 4 fotogramas por
-        hoja). Esto es útil para no tener que adivinar a mano el
-        tamaño exacto de un sprite nuevo: si el archivo real tiene
-        proporciones distintas a las esperadas, el recorte se ajusta
-        solo. Pasar ancho_cuadro/alto_cuadro a mano sigue funcionando
-        igual que antes, para los sprites que ya se sabe que miden así.
-
-        escala: factor de escala fijo, se usa solo si no se indica
-        alto_destino.
-
-        alto_destino: si se indica, IGNORA "escala" y calcula
-        automáticamente el factor necesario para que el personaje mida
-        siempre "alto_destino" píxeles de alto en pantalla, sin
-        importar el tamaño original de su hoja. El ancho se escala en
-        la misma proporción (no se deforma el dibujo). Esta es la
-        forma recomendada de cargar cualquier personaje que deba
-        verse del mismo tamaño que los demás.
-        """
+        
 
         self._cache_frames = {}
 
@@ -755,17 +710,7 @@ class MenuPrincipal(EscenaBase):
 # ============================================================================
 
 class Camara:
-    """Cámara de desplazamiento horizontal genérica.
-
-    Cada escena/ruta del capítulo (litoral, campamento, fortín, etc.)
-    tiene su propio ancho de mundo panorámico, así que la cámara recibe
-    ese ancho por parámetro en vez de depender de una constante fija.
-    Si el ancho del mundo es igual (o menor) al ancho de la pantalla,
-    la cámara simplemente no se mueve — así una escena "de cuarto
-    cerrado" (como la sala del Coronel) no necesita ningún caso
-    especial: es una escena panorámica cuyo mundo mide lo mismo que la
-    pantalla.
-    """
+    
 
     def __init__(self, ancho_mundo: int = ANCHO_PANTALLA):
         self.ancho_mundo = ancho_mundo
@@ -785,9 +730,7 @@ class Camara:
 # ============================================================================
 
 class SegmentoFondo:
-    """Un tramo de imagen de fondo, ya cargado y escalado, ubicado en
-    una posición fija del mundo. __slots__ evita el overhead de un
-    __dict__ por instancia: puede haber muchos tramos en memoria."""
+    
 
     __slots__ = ("imagen", "x_mundo", "ancho")
 
@@ -798,34 +741,7 @@ class SegmentoFondo:
 
 
 class GestorFondos:
-    """Administra los fondos de todas las escenas/niveles del capítulo.
-
-    Estructura interna:
-        self._niveles = {
-            "nombre_nivel": {
-                "nombre_capa": [SegmentoFondo, SegmentoFondo, ...],
-                ...
-            },
-            ...
-        }
-
-    Ventajas sobre cargar un fondo "suelto" por escena:
-      - Precarga real: registrar_nivel() hace TODO el trabajo pesado
-        (leer de disco, convert_alpha()/colorkey, escalar con
-        pygame.transform.scale()) una sola vez, ANTES de que arranque
-        el bucle principal (se llama desde CapituloLitoral.__init__).
-        Cambiar de nivel después, con cambiar_nivel(), es instantáneo:
-        no hay lectura de disco ni escalado en ese momento.
-      - Descarte visual (culling): dibujar() solo hace blit() de los
-        tramos que realmente se superponen con lo que la cámara está
-        mostrando en ese instante, no de todo el nivel.
-      - Capas: cada nivel puede tener varias capas (por ejemplo
-        "fondo" y "detalle") que se dibujan en el orden en que se
-        registraron, para un efecto de paralaje simple.
-      - Varios tramos por capa: si un mundo panorámico fuera muy
-        ancho, se puede armar con varias imágenes más chicas en vez
-        de una sola imagen gigante estirada.
-    """
+    
 
     def __init__(self, ancho_pantalla: int = ANCHO_PANTALLA):
         self._ancho_pantalla = ancho_pantalla
@@ -834,20 +750,7 @@ class GestorFondos:
 
     def registrar_nivel(self, nombre_nivel: str, capas: dict,
                         ancho_tramo: int, alto: int = ALTO_PANTALLA) -> None:
-        """Carga y pre-escala TODOS los tramos de un nivel, capa por
-        capa. Se llama una sola vez por nivel, antes del bucle
-        principal (ver CapituloLitoral._registrar_fondos).
-
-        Args:
-            nombre_nivel: clave del nivel/zona. En este proyecto se
-                          usa el mismo nombre que estado_juego, por
-                          comodidad (ver ESTADO_LITORAL, etc.).
-            capas:        dict {nombre_capa: [ruta1, ruta2, ...]}.
-                          Cada ruta se ubica una al lado de la otra,
-                          cubriendo el ancho del mundo.
-            ancho_tramo:  ancho en píxeles de cada tramo individual.
-            alto:         alto en píxeles de cada tramo.
-        """
+        
         capas_cargadas = {}
         for nombre_capa, rutas in capas.items():
             tramos = []
@@ -862,24 +765,20 @@ class GestorFondos:
             self.nivel_actual = nombre_nivel
 
     def cambiar_nivel(self, nombre_nivel: str) -> None:
-        """Cambia el fondo activo. Como todo se precargó con
-        registrar_nivel(), esto es instantáneo: no hay lectura de
-        disco ni escalado en este punto."""
+        
         if nombre_nivel not in self._niveles:
             raise KeyError(f"Nivel de fondo '{nombre_nivel}' no registrado.")
         self.nivel_actual = nombre_nivel
 
     def ancho_mundo_actual(self) -> int:
-        """Ancho total del nivel activo, sumando los tramos de su capa
-        más ancha. Se usa para configurar la Camara de la escena."""
+        
         capas = self._niveles.get(self.nivel_actual, {})
         if not capas:
             return self._ancho_pantalla
         return max(sum(tramo.ancho for tramo in tramos) for tramos in capas.values())
 
     def dibujar(self, pantalla: pygame.Surface, camara: Camara) -> None:
-        """Dibuja únicamente los tramos del nivel activo que están
-        visibles dentro de la cámara en este instante (culling)."""
+        
         capas = self._niveles.get(self.nivel_actual)
         if not capas:
             return
@@ -904,7 +803,7 @@ class GestorFondos:
 # ============================================================================
 
 class Centinela:
-    """Soldado que patrulla y detecta a Chicha si queda expuesto a su vista."""
+    
 
     ANCHO_CAJA = int(ANCHO_VIS_PERSONAJE * 0.55)
     ALTO_CAJA  = ALTO_VIS_PERSONAJE
@@ -1006,12 +905,7 @@ class Centinela:
 
 
 class Soldado:
-    """Soldado que patrulla la entrada del fortín y ataca por contacto.
-
-    Hacen falta DOS impactos de boleadora para derribarlo: el primero
-    lo "tambalea" (se aturde y pierde velocidad), el segundo lo
-    derriba definitivamente.
-    """
+    
 
     ANCHO_CAJA = int(ANCHO_VIS_PERSONAJE * 0.55)
     ALTO_CAJA  = ALTO_VIS_PERSONAJE
@@ -1087,7 +981,7 @@ class Soldado:
 
 
 class Boleadora:
-    """Proyectil arrojadizo que aturde/derriba soldados (dos impactos)."""
+    
 
     ANCHO = 68
     ALTO  = 68
@@ -1114,13 +1008,7 @@ class Boleadora:
 
 
 class CompaneroCruz:
-    """Cruz acompaña a Benjamín por el Litoral si fue liberado en el Cap. 1.
-
-    Usa la misma lógica de sprite sheets (HojaSprites + math.floor) que
-    el resto de los personajes: cuadro 0 en reposo, cuadros 1-3 en su
-    ciclo de caminata mientras se mueve junto a Benjamín. Se oculta
-    automáticamente en los matorrales junto con Benjamín.
-    """
+    
 
     def __init__(self):
         # alto_destino=ALTO_VIS_PERSONAJE: la hoja de Cruz viene en una
@@ -1169,12 +1057,7 @@ class CompaneroCruz:
 
 
 class Arapoty:
-    """NPC guaraní que Benjamín encuentra en el campamento (Fase 2).
-
-    Se queda quieta en un punto del mapa (con una animación de espera)
-    hasta que el jugador se acerca e interactúa con ella para aprender
-    el sistema de mezclas.
-    """
+    
 
     ANCHO_CAJA = int(ANCHO_VIS_PERSONAJE * 0.6)
     ALTO_CAJA  = ALTO_VIS_PERSONAJE
@@ -1238,7 +1121,7 @@ class Arapoty:
 
 
 class Coronel:
-    """El Coronel Ibáñez, esperando a Benjamín en su sala."""
+    
 
     ANCHO_CAJA = int(ANCHO_VIS_PERSONAJE * 0.6)
     ALTO_CAJA  = ALTO_VIS_PERSONAJE
@@ -1273,7 +1156,7 @@ class Coronel:
         )
 
     def actualizar(self, dt: float, x_jugador: float) -> bool:
-        """Actualiza al Coronel. Retorna True si causó daño instantáneo al jugador."""
+        
         self._timer_anim += dt
         if self._timer_anim >= 0.6:
             self._timer_anim = 0.0
@@ -1319,12 +1202,12 @@ class Coronel:
         return daño_instantaneo
 
     def recibir_golpe(self) -> bool:
-        """El Coronel recibe un golpe. Retorna True si fue derrotado."""
+        
         self.vida -= 1
         return self.vida <= 0
 
     def iniciar_combate(self):
-        """Inicia el modo combate del Coronel."""
+        
         self.esta_combatiendo = True
         self._posicion_original = self.x_mundo  # Guardar posición original
 
@@ -1358,12 +1241,7 @@ class Coronel:
 # ============================================================================
 
 class MenuBotanico:
-    """Mini-juego de mezcla: el "mortero de Arapoty".
-
-    El jugador arrastra dos plantas a las ranuras centrales y las
-    combina para obtener una preparación nueva (el "Mate Calmante",
-    necesario para seguir viaje hacia el fortín).
-    """
+    
 
     RECETAS = {
         tuple(sorted(["Yerba Mate", "Burrito"])): "Mate Calmante",
@@ -1493,7 +1371,7 @@ class MenuBotanico:
                                  r_item.centery - t_obj.get_height() // 2))
 
 class MenuInventario:
-    """Menú de inventario para consumir yerbas y objetos."""
+    
     
     # Efectos de las yerbas/objetos
     EFECTOS_OBJETOS = {
@@ -1536,7 +1414,7 @@ class MenuInventario:
         return None
     
     def _consumir_objeto(self, item: str) -> None:
-        """Consume un objeto del inventario."""
+        
         if item in self.EFECTOS_OBJETOS:
             efecto = self.EFECTOS_OBJETOS[item]
             if item in self.inventario:
@@ -1551,7 +1429,7 @@ class MenuInventario:
             self._vida_recuperada = 0
     
     def obtener_vida_recuperada(self) -> int:
-        """Retorna y resetea la vida recuperada del último consumo."""
+        
         if hasattr(self, '_vida_recuperada'):
             vida = self._vida_recuperada
             self._vida_recuperada = 0
@@ -1559,7 +1437,7 @@ class MenuInventario:
         return 0
     
     def obtener_salud_recuperada(self, item: str) -> int:
-        """Retorna la cantidad de vida que recupera un objeto."""
+        
         if item in self.EFECTOS_OBJETOS:
             return self.EFECTOS_OBJETOS[item].get("vida", 0)
         return 0
@@ -1617,7 +1495,7 @@ class MenuInventario:
             pantalla.blit(vacio, (self._rect_panel.centerx - vacio.get_width() // 2, self._rect_panel.y + 200))
 
 class MenuAyuda:
-    """Menú de ayuda que muestra todos los movimientos disponibles."""
+    
     
     def __init__(self, ancho_pantalla: int, alto_pantalla: int):
         self._fuente = pygame.font.SysFont("Georgia", 16)
@@ -1636,7 +1514,7 @@ class MenuAyuda:
         ]
     
     def manejar_evento(self, evento: pygame.event.Event) -> bool:
-        """Retorna True si se debe cerrar el menú."""
+        
         if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
             return True
         
@@ -1707,33 +1585,7 @@ TEXTOS_CINEMATICA_ARAPOTY = [
 # ============================================================================
 
 class CapituloLitoral(EscenaBase):
-    """Capítulo 3 — El fortín del Coronel (litoral entrerriano).
-
-    El capítulo está organizado como una secuencia de ESCENAS/RUTAS
-    propias, cada una con su fondo panorámico y su propio "mundo"
-    (ancho en píxeles). El atributo `self.estado_juego` indica en todo
-    momento cuál de esas escenas está activa, y `_cargar_escena()` es
-    el único lugar donde se cambia de una a otra: ahí se actualiza el
-    fondo, se reinicia la posición de Benjamín y se arma una cámara
-    nueva para el ancho de mundo que corresponda.
-
-    Progresión (estado_juego):
-      ESTADO_INTRO             -> texto de apertura del capítulo
-      ESTADO_LITORAL           -> Fase 1: cabalgata libre por "litoral";
-                                   llegar al borde derecho dispara la
-                                   transición a "campamento"
-      ESTADO_CAMPAMENTO        -> Fase 2: ruta "campamento"; Arapoty
-                                   enseña las mezclas y dispara el
-                                   "Modo Cinemática" (personalizable)
-      ESTADO_FORTIN_ENTRADA    -> Fase 3a: ruta "fortin_entrada";
-                                   soldados + boleadora (dos impactos)
-      ESTADO_FORTIN_INTERIOR   -> Fase 3b: ruta "fortin_interior";
-                                   sigilo con centinelas y matorrales
-                                   (Benjamín y Cruz pueden ocultarse)
-      ESTADO_SALA_CORONEL      -> Fase 4: ruta "sala_coronel"; aparece
-                                   el Coronel Ibáñez y la decisión final
-      ESTADO_RESUELTO          -> fundido de cierre -> fin_demo
-    """
+    
 
     TITULO = "Capítulo 3 El fortín del Coronel"
     REGION = "Litoral entrerriano · 1870"
@@ -1873,14 +1725,7 @@ class CapituloLitoral(EscenaBase):
     # ------------------------------------------------------------------
 
     def _registrar_fondos(self) -> None:
-        """Precarga TODOS los fondos del capítulo de una sola vez,
-        antes de que arranque el bucle principal. Cada escena/ruta se
-        registra como un "nivel" del GestorFondos, usando el mismo
-        nombre que su estado_juego. Por ahora cada nivel tiene una
-        sola capa ("fondo") con un único tramo del ancho completo del
-        mundo; si más adelante hace falta un mundo armado con varias
-        imágenes más chicas, o una capa extra de detalle en primer
-        plano, alcanza con agregar más rutas a la lista de esa capa."""
+        
         self._fondos = GestorFondos(ANCHO_PANTALLA)
         self._fondos.registrar_nivel(
             self.ESTADO_LITORAL, {"fondo": [RUTA_FONDO_LITORAL]}, ANCHO_MUNDO_LITORAL)
@@ -1894,10 +1739,7 @@ class CapituloLitoral(EscenaBase):
             self.ESTADO_SALA_CORONEL, {"fondo": [RUTA_FONDO_SALA_CORONEL]}, ANCHO_MUNDO_SALA_CORONEL)
 
     def _cargar_escena(self, estado: str, x_inicial: float = 100.0) -> None:
-        """Cambia de escena/ruta: actualiza estado_juego, activa el
-        nivel de fondos que corresponda (ya precargado por
-        _registrar_fondos, así que esto es instantáneo) y arma una
-        cámara nueva del ancho que corresponda a esta escena."""
+        
         self.estado_juego        = estado
         self._fondos.cambiar_nivel(estado)
         self._ancho_mundo_actual = self._fondos.ancho_mundo_actual()
@@ -1907,8 +1749,7 @@ class CapituloLitoral(EscenaBase):
         self._jugador_oculto     = False
 
     def _llego_al_borde(self) -> bool:
-        """True si Benjamín está a MARGEN_LLEGADA_BORDE píxeles (o
-        menos) del límite derecho del mundo actual."""
+        
         limite = self._ancho_mundo_actual - self.ANCHO_CHICHA - MARGEN_LLEGADA_BORDE
         return self._x_mundo >= limite
 
@@ -2072,8 +1913,7 @@ class CapituloLitoral(EscenaBase):
             self._companero_cruz.actualizar(dt, self._en_movimiento)
 
     def _actualizar_animacion_benjamin(self, dt: float) -> None:
-        """Maneja el ciclo de animación de Benjamín: ataque (si está
-        activo) tiene prioridad sobre caminar/reposo."""
+        
         if self._atacando:
             self._timer_ataque += dt
             if self._timer_ataque >= self._vel_ataque:
@@ -2113,7 +1953,7 @@ class CapituloLitoral(EscenaBase):
             self._mostrar_mensaje("Bajás del caballo. Yanis te espera cerca.")
 
     def _atacar_coronel(self) -> None:
-        """Benjamín ataca al Coronel durante el combate."""
+        
         if not self._combate_coronel_activo:
             return
 
@@ -2142,8 +1982,7 @@ class CapituloLitoral(EscenaBase):
         self._iniciar_animacion_ataque()
 
     def _iniciar_combate_fortin(self) -> None:
-        """Al llegar a la entrada del fortín, el jugador se mueve a la
-        zona de combate y aparecen los soldados que la custodian."""
+        
         # Mover al jugador a la coordenada específica de combate
         self._x_mundo = float(X_INICIO_COMBATE_FORTIN)
         self._camara.actualizar(self._x_mundo)
@@ -2395,8 +2234,7 @@ class CapituloLitoral(EscenaBase):
             self._menu_ayuda.dibujar(pantalla)
 
     def _dibujar_benjamin_mundo(self, pantalla: pygame.Surface) -> None:
-        """Dibuja a Benjamín (caminando, atacando, o a caballo) en
-        cualquiera de las escenas con mundo panorámico."""
+        
         offset_y = 0  # Offset vertical para alinear con el suelo
         
         # Usar hojas especiales para la sala del Coronel (personajes más grandes)
@@ -2467,16 +2305,14 @@ class CapituloLitoral(EscenaBase):
     # --Modo Cinemática (historia personalizable, ver TEXTOS_CINEMATICA_ARAPOTY)
 
     def _alternar_menu_ayuda(self) -> None:
-        """Abre o cierra el menú de ayuda con los controles del capítulo."""
+        
         if self._menu_ayuda is None:
             self._menu_ayuda = MenuAyuda(ANCHO_PANTALLA, ALTO_PANTALLA)
         else:
             self._menu_ayuda = None
 
     def _iniciar_cinematica_historia(self) -> None:
-        """Inmediatamente después de aprender las mezclas, se pausa la
-        acción y se reproduce la historia de TEXTOS_CINEMATICA_ARAPOTY
-        como una cinemática de cajas de diálogo."""
+        
         lineas = [LineaDialogo("Arapoty", texto) for texto in TEXTOS_CINEMATICA_ARAPOTY]
 
         def al_cerrar():
@@ -2485,8 +2321,7 @@ class CapituloLitoral(EscenaBase):
         self._dialogo.iniciar(lineas, callback_cerrar=al_cerrar)
 
     def _finalizar_cinematica(self) -> None:
-        """Termina el Modo Cinemática y avanza a la Fase 3: la entrada
-        del fortín, custodiada por soldados."""
+        
         self._tutorial_completado = True
         self._menu_botanico       = None
         self._cargar_escena(self.ESTADO_FORTIN_ENTRADA)
