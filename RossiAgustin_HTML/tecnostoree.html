@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TecnoStore</title>
+        <link rel="stylesheet" href="deco_tecno.css">
+        <script src="tecno.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\logotipo_tecno.png" alt="TecnoStore Logo" class="logo-img">
+                    <h1 class="logo-text">TecnoStore</h1>
+                </div>
+                <nav>
+                    <a href="#Inicio">Inicio</a>
+                    <a href="#Productos">Productos</a>
+                    <a href="#Ofertas">Ofertas</a>
+                    <a href="#Compra">Compra</a>
+                    <a href="#Contacto">Contacto</a>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section id="Inicio">
+                <div class="hero">
+                    <h1>Tecnología de vanguardia</h1>
+                    <p>Los mejores productos tecnológicos al mejor precio</p>
+                </div>
+            </section>
+
+            <section id="Productos">
+                <h2>Nuestros Productos</h2>
+                <div class="productos-grid">
+                    <article class="producto-card">
+                        <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\notebook.webp" alt="Notebook" class="producto-img">
+                        <div class="producto-info">
+                            <h3>Notebook HP Pavilion</h3>
+                            <p>Procesador Intel Core i7, 16GB RAM, 512GB SSD, pantalla 15.6" Full HD. Ideal para trabajo y gaming.</p>
+                            <p class="precio">$1.200.000</p>
+                        </div>
+                    </article>
+
+                    <article class="producto-card">
+                        <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\celiu.webp" alt="Celular" class="producto-img">
+                        <div class="producto-info">
+                            <h3>Samsung Galaxy S24</h3>
+                            <p>Pantalla AMOLED 6.8", 256GB de almacenamiento, cámara 200MP, batería 5000mAh. La última tecnología en tu bolsillo.</p>
+                            <p class="precio">$900.000</p>
+                        </div>
+                    </article>
+
+                    <article class="producto-card">
+                        <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\auris.webp" alt="Auriculares" class="producto-img">
+                        <div class="producto-info">
+                            <h3>Sony WH-1000XM5</h3>
+                            <p>Auriculares con cancelación de ruido, 30 horas de batería, sonido Hi-Res. Comodidad y calidad premium.</p>
+                            <p class="precio">$350.000</p>
+                        </div>
+                    </article>
+
+                    <article class="producto-card">
+                        <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\teclado.webp" alt="Teclado" class="producto-img">
+                        <div class="producto-info">
+                            <h3>Logitech MX Keys</h3>
+                            <p>Teclado inalámbrico mecánico, retroiluminación, batería recargable, compatibilidad multi-dispositivo.</p>
+                            <p class="precio">$180.000</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="Ofertas">
+                <h2>Oferta Especial</h2>
+                <div class="oferta-card">
+                    <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\oferta.webp" alt="Oferta Especial" class="oferta-img">
+                    <div class="oferta-info">
+                        <h3>Apple MacBook Pro M3</h3>
+                        <p>Chip M3 Pro, 18GB RAM, 512GB SSD, pantalla Liquid Retina XDR 14". Potencia y rendimiento profesional.</p>
+                        <p class="precio-original">$2.500.000</p>
+                        <p class="precio-oferta">$1.999.999</p>
+                        <p class="descuento">¡20% DE DESCUENTO!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="Compra">
+                <h2>Realizar Compra</h2>
+                <div class="compra-container">
+                    <div class="productos-lista">
+                        <p class="section-number">01 — SELECCIONA PRODUCTOS</p>
+                        <div class="producto-item" data-precio="1200000">
+                            <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\notebook.webp" alt="Notebook" class="prod-img">
+                            <div class="prod-info">
+                                <h3>Notebook HP Pavilion</h3>
+                                <p class="prod-precio">$1.200.000</p>
+                            </div>
+                            <div class="prod-cantidad">
+                                <button type="button" class="btn-menos">−</button>
+                                <span class="cant-numero">0</span>
+                                <button type="button" class="btn-mas">+</button>
+                            </div>
+                            <p class="prod-subtotal">$0</p>
+                        </div>
+
+                        <div class="producto-item" data-precio="900000">
+                            <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\celiu.webp" alt="Celular" class="prod-img">
+                            <div class="prod-info">
+                                <h3>Samsung Galaxy S24</h3>
+                                <p class="prod-precio">$900.000</p>
+                            </div>
+                            <div class="prod-cantidad">
+                                <button type="button" class="btn-menos">−</button>
+                                <span class="cant-numero">0</span>
+                                <button type="button" class="btn-mas">+</button>
+                            </div>
+                            <p class="prod-subtotal">$0</p>
+                        </div>
+
+                        <div class="producto-item" data-precio="350000">
+                            <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\auris.webp" alt="Auriculares" class="prod-img">
+                            <div class="prod-info">
+                                <h3>Sony WH-1000XM5</h3>
+                                <p class="prod-precio">$350.000</p>
+                            </div>
+                            <div class="prod-cantidad">
+                                <button type="button" class="btn-menos">−</button>
+                                <span class="cant-numero">0</span>
+                                <button type="button" class="btn-mas">+</button>
+                            </div>
+                            <p class="prod-subtotal">$0</p>
+                        </div>
+
+                        <div class="producto-item" data-precio="180000">
+                            <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\teclado.webp" alt="Teclado" class="prod-img">
+                            <div class="prod-info">
+                                <h3>Logitech MX Keys</h3>
+                                <p class="prod-precio">$180.000</p>
+                            </div>
+                            <div class="prod-cantidad">
+                                <button type="button" class="btn-menos">−</button>
+                                <span class="cant-numero">0</span>
+                                <button type="button" class="btn-mas">+</button>
+                            </div>
+                            <p class="prod-subtotal">$0</p>
+                        </div>
+
+                        <div class="producto-item oferta-especial" data-precio="1999999">
+                            <img src="C:\Users\aguso\OneDrive\Documentos\cosas del colegio\PROGRAMACION_6TOA_AGUSTIN_OLMEDO\fotos_pagina_web\oferta.webp" alt="MacBook Pro" class="prod-img">
+                            <div class="prod-info">
+                                <h3>Apple MacBook Pro M3</h3>
+                                <p class="prod-precio-oferta">$1.999.999</p>
+                                <p class="prod-descuento">¡20% OFF!</p>
+                            </div>
+                            <div class="prod-cantidad">
+                                <button type="button" class="btn-menos">−</button>
+                                <span class="cant-numero">0</span>
+                                <button type="button" class="btn-mas">+</button>
+                            </div>
+                            <p class="prod-subtotal">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="ordenar-box">
+                        <label>
+                            <span>Ordenar por:</span>
+                            <select id="ordenar">
+                                <option value="default">Predeterminado</option>
+                                <option value="precio-asc">Precio: Menor a Mayor</option>
+                                <option value="precio-desc">Precio: Mayor a Menor</option>
+                                <option value="nombre">Nombre (A-Z)</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="total-box">
+                        <p class="total">Total: $<span id="total">0</span></p>
+                    </div>
+
+                    <div class="datos-cliente">
+                        <p class="section-number">02 — TUS DATOS</p>
+                        <label>
+                            <span>Nombre y apellido</span>
+                            <input type="text" name="name" placeholder="Ej. Juan Pérez" required>
+                        </label>
+                        <label>
+                            <span>Email</span>
+                            <input type="email" name="email" placeholder="juan@email.com" required>
+                        </label>
+                        <label>
+                            <span>Teléfono</span>
+                            <input type="tel" name="phone" placeholder="11 2345 6789" required>
+                        </label>
+                        <label>
+                            <span>Dirección de entrega</span>
+                            <input type="text" name="direccion" placeholder="Calle 123, Ciudad" required>
+                        </label>
+                    </div>
+
+                    <button type="button" id="btnConfirmar" class="btn-confirmar" disabled>CONFIRMAR COMPRA</button>
+                    <p id="aviso" class="aviso">Agregá al menos un producto para continuar.</p>
+                    <div id="confirmacion" class="confirmacion" style="display: none;">
+                        ¡Compra realizada con éxito! Te contactaremos para coordinar la entrega.
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer id="Contacto">
+            <h2>Contacto</h2>
+            <div class="contacto-info">
+                <p>Horarios de atención: Lunes a Viernes 09:00 - 20:00</p>
+                <p>Sábados 10:00 - 18:00</p>
+                <p>Ubicación: Av. Tecnología 123, Ciudad Digital</p>
+                <p>Teléfono: 555-TECNO</p>
+                <p>Email: ventas@tecnostore.com</p>
+            </div>
+        </footer>
+    </body>
+</html>
